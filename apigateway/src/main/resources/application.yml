@@ -1,0 +1,44 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: API-GATEWAY
+  cloud:
+    gateway:
+      routes:
+        - id: USER-SERVICE
+          uri: lb://USER-SERVICE 
+          predicates:
+            - Path=/api/v1/account/** , /api/v1/reg/**
+          filters:
+          - AuthenticationFilter             
+        
+        - id: CUSTOMER-SERVICE
+          uri: lb://CUSTOMER-SERVICE
+          predicates:
+            - Path=/api/v1/coustomer/**     
+          filters:
+          - AuthenticationFilter
+          
+        - id: SECURITY-SERVICE
+          uri: lb://SECURITY-SERVICE
+          predicates:
+            - Path=/api/v1/security/**     
+          filters:
+          - AuthenticationFilter
+
+#filters AuthenticationFilter for validating token
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8084/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+#spring.cloud.gateway.routes[0].predicates[1]=Path=/api/v1/reg/**   
+
+
+
